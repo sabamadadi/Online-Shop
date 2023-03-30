@@ -1,6 +1,16 @@
 # Created by https://www.toptal.com/developers/gitignore/api/intellij,java,gradle,maven,macos,windows,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij,java,gradle,maven,macos,windows,linux
 
+### Database ###
+*.accdb
+*.db
+*.dbf
+*.mdb
+*.pdb
+*.sqlite3
+*.db-shm
+*.db-wal
+
 ### Intellij ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
