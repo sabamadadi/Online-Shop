@@ -7,4 +7,5 @@ public class Product {
     static ArrayList<String> comments = new ArrayList<String>();
     static String type;
     static String category;
+    static Seller seller;
 }
