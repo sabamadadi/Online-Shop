@@ -1,96 +1,268 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Shop {
-    static String name;
-    static String webaddress;
-    static String phone;
-    static ArrayList<User> users = new ArrayList<User>();
-    static ArrayList<Admin> admins = new ArrayList<Admin>();
-    static ArrayList<Seller> sellers = new ArrayList<Seller>();
-    static ArrayList<Product> products = new ArrayList<Product>();
-    static float wallet;
-    static Authenticator authenticator;
+	static String name;
+	static String webaddress;
+	static String phone;
+	static ArrayList<User> users = new ArrayList<User>();
+	static ArrayList<String> fund_users = new ArrayList<String>();
+	static ArrayList<String> unconfirmeds = new ArrayList<String>();
+	static ArrayList<Integer> fund_cnt = new ArrayList<Integer>();
+	static ArrayList<Admin> admins = new ArrayList<Admin>();
+	static ArrayList<Seller> sellers = new ArrayList<Seller>();
+	static ArrayList<Product> products = new ArrayList<Product>();
+	static float wallet;
+	static Authenticator authenticator;
 
-    public Shop(String input_name, String input_webaddress, String input_phone) {
-        name = input_name;
-        webaddress = input_webaddress;
-        phone = input_phone;
-
-        authenticator = new Authenticator(this);
-
-        Admin admin = new Admin("admin", authenticator.Hash("admin"), "admin@gmail.com");
-        admins.add(admin);
-    }
-
-    public User LoginUser() {
-        User tmp = authenticator.LoginUser();
-        return tmp;
-    }
-
-    public User RegisterUser() {
-        User tmp = authenticator.RegisterUser();
-        if(tmp != null) {
-            users.add(tmp);
-        }
-        return tmp;
-    }
-
-    public Admin LoginAdmin() {
-        Admin tmp = authenticator.LoginAdmin();
-        return tmp;
-    }
-
-    public Admin RegisterAdmin() {
-        Admin tmp = authenticator.RegisterAdmin();
-        if(tmp != null) {
-            admins.add(tmp);
-        }
-        return tmp;
-    }
-
-    public Seller LoginSeller() {
-        Seller tmp = authenticator.LoginSeller();
-        return tmp;
-    }
-
-    public Seller RegisterSeller() {
-        Seller tmp = authenticator.RegisterSeller();
-        if(tmp != null) {
-            sellers.add(tmp);
-        }
-        return tmp;
-    }
-
-    private Product Find(String input_product) {
-        for(int i = 0; i < products.size(); i++) {
-            if(products.get(i).name.equals(input_product)) {
-                return products.get(i);
-            }
-        }
-        return null;
-    }
-
-    public void Purchase(Cart cart) {
-        Order order = new Order(cart.user);
-        for(int i = 0; i < cart.cart.size(); i++) {
-            Product current_product = Find(cart.cart.get(i));
-            int quantity = cart.cart_cnt.get(i);
-
-            order.cart.add(current_product.name);
-            order.cart_cnt.add(quantity);
-
-            cart.user.purchased.add(current_product.name);
-            cart.user.purchased_cnt.add(quantity);
-
-            cart.cart.remove(i);
-            cart.cart_cnt.remove(i);
-
-            cart.user.wallet -= quantity * current_product.price;
-            current_product.seller.wallet += (0.9) * quantity * current_product.price;
-            wallet += (0.1) * quantity * current_product.price;
-        }
-
-        order.user.history.add(order);
-        return;
-    }
+	public Shop(String input_name, String input_webaddress, String input_phone) {
+		name = input_name;
+		webaddress = input_webaddress;
+		phone = input_phone;
+		
+		authenticator = new Authenticator(this);
+		
+		Admin admin = new Admin("admin", authenticator.Hash("admin"), "admin@gmail.com", this);
+		admins.add(admin);
+	}
+	
+	public User LoginUser() {
+		User tmp = authenticator.LoginUser();
+		return tmp;
+	}
+	
+	public User RegisterUser() {
+		User tmp = authenticator.RegisterUser();
+		if(tmp != null) {
+			users.add(tmp);
+		}
+		return tmp;
+	}
+	
+	public Admin LoginAdmin() {
+		Admin tmp = authenticator.LoginAdmin();
+		return tmp;
+	}
+	
+	public Admin RegisterAdmin() {
+		Admin tmp = authenticator.RegisterAdmin();
+		if(tmp != null) {
+			admins.add(tmp);
+		}
+		return tmp;
+	}
+	
+	public Seller LoginSeller() {
+		Seller tmp = authenticator.LoginSeller();
+		return tmp;
+	}
+	
+	public Seller RegisterSeller() {
+		Seller tmp = authenticator.RegisterSeller();
+		if(tmp != null) {
+			sellers.add(tmp);
+		}
+		return tmp;
+	}
+	
+	private Product Find(String input_product) {
+		for(int i = 0; i < products.size(); i++) {
+			if(products.get(i).name.equals(input_product)) {
+				return products.get(i);
+			}
+		}
+		return null;
+	}
+	
+	public void Purchase(Cart cart) {
+		Order order = new Order(cart.user);
+		for(int i = 0; i < cart.cart.size(); i++) {
+			Product current_product = Find(cart.cart.get(i));
+			int quantity = cart.cart_cnt.get(i);
+			
+			order.cart.add(current_product.name);
+			order.cart_cnt.add(quantity);
+			
+			cart.user.purchased.add(current_product.name);
+			cart.user.purchased_cnt.add(quantity);
+			
+			cart.cart.remove(i);
+			cart.cart_cnt.remove(i);
+			
+			cart.user.wallet -= quantity * current_product.price;
+			current_product.seller.wallet += (0.9) * quantity * current_product.price;
+			wallet += (0.1) * quantity * current_product.price;
+		}
+		
+		order.user.history.add(order);
+		return;
+	}
+	
+	public void RequestFund(User current) {
+		Scanner cs = new Scanner(System.in);
+		System.out.println("Enter amount of your requested fund :");
+		int amount = Integer.parseInt(cs.nextLine());
+		
+		for(int i = 0; i < fund_users.size(); i++) {
+			if(fund_users.get(i).equals(current.username)) {
+				fund_cnt.set(i, fund_cnt.get(i) + amount);
+				return;
+			}
+		}
+		
+		fund_users.add(current.username);
+		fund_cnt.add(amount);
+		return;
+	}
+	
+	public boolean Reserve(String name) {
+		Product current = Find(name);
+		if(current == null || current.cnt == 0) {
+			return false;
+		}
+		
+		current.cnt -= 1;
+		return true;
+	}
+	
+	public void Release(String name) {
+		Product current = Find(name);
+		if(current == null) {
+			return;
+		}
+		current.cnt += 1;
+		return;
+	}
+	
+	public void ShowProduct(Product product, Cart cart) {
+		product.Show();
+		
+		Scanner cs = new Scanner(System.in);
+		System.out.println("Do you want to buy? (Y/N)");
+		String ans = cs.nextLine();
+		if(ans.equals("Y")) {
+			cart.Add(product.name);
+		}
+		return;
+	}
+	
+	public void Search(Cart cart) {
+		Scanner cs = new Scanner(System.in);
+		System.out.println("Enter name of product you want to search for:");
+		String name = cs.nextLine();
+		
+		System.out.println("Enter index of product you want to see");
+		System.out.println("To exit enter 0:");
+		
+		int cnt = 0;
+		for(int i = 0; i < products.size(); i++) {
+			boolean have = false;
+			for(int j = 0; j + name.length() <= products.get(i).name.length(); j++) {
+				boolean flag = true;
+				for(int k = 0; k < name.length(); k++) {
+					if(products.get(i).name.charAt(j + k) != name.charAt(k)) {
+						flag = false;
+						break;
+					}
+				}
+				have |= flag;
+			}
+			if(have) {
+				cnt += 1;
+				System.out.println(cnt + " " + products.get(i).name);
+			}
+		}
+		
+		int input = Integer.parseInt(cs.nextLine());
+		if(input == 0) {
+			return;
+		}
+		
+		cnt = 0;
+		for(int i = 0; i < products.size(); i++) {
+			boolean have = false;
+			for(int j = 0; j + name.length() <= products.get(i).name.length(); j++) {
+				boolean flag = true;
+				for(int k = 0; k < name.length(); k++) {
+					if(products.get(i).name.charAt(j + k) != name.charAt(k)) {
+						flag = false;
+						break;
+					}
+				}
+				have |= flag;
+			}
+			if(have) {
+				cnt += 1;
+				if(cnt == input) {
+					ShowProduct(products.get(i), cart);
+				}
+			}
+		}
+		return;
+	}
+	public void ConfirmFund() {
+		Scanner cs = new Scanner(System.in);
+		System.out.println("Enter Requst index you wish to accept");
+		System.out.println("Enter 0 to exit");
+		
+		int input = 1;
+		while(input != 0) {
+			for(int i = 0; i < fund_users.size(); i++) {
+				System.out.println((i + 1) + " Username: " + fund_users.get(i) + " Amount: " + fund_cnt.get(i));
+			}
+			input = Integer.parseInt(cs.nextLine());
+			if(input != 0 && input-1 < fund_users.size()) {
+				for(int i = 0; i < users.size(); i++) {
+					if(users.get(i).username.equals(fund_users.get(input - 1))) {
+						users.get(i).wallet += fund_cnt.get(input - 1);
+						fund_users.remove(input - 1);
+						fund_cnt.remove(input - 1);
+						break;
+					}
+				}
+			}
+		}
+		return;
+	}
+	public void ConfirmSeller() {
+		Scanner cs = new Scanner(System.in);
+		System.out.println("Enter Seller index you wish to confirm");
+		System.out.println("Enter 0 to exit");
+		
+		int input = 1;
+		while(input != 0) {
+			for(int i = 0; i < unconfirmeds.size(); i++) {
+				System.out.println((i + 1) + " Company name: " + unconfirmeds.get(i));
+			}
+			input = Integer.parseInt(cs.nextLine());
+			if(input != 0 && input-1 < unconfirmeds.size()) {
+				for(int i = 0; i < sellers.size(); i++) {
+					if(sellers.get(i).company_name.equals(unconfirmeds.get(input - 1))) {
+						sellers.get(i).registered = true;
+						unconfirmeds.remove(input - 1);
+						break;
+					}
+				}
+			}
+		}
+		return;
+	}
+	
+	public void AddProduct(Seller seller) {
+		Scanner cs = new Scanner(System.in);
+		System.out.println("Enter name of the product: ");
+		String name = cs.nextLine();
+		System.out.println("Enter price of the product: ");
+		int price = Integer.parseInt(cs.nextLine());
+		System.out.println("Enter amount of the product: ");
+		int cnt = Integer.parseInt(cs.nextLine());
+		System.out.println("Enter type of the product: ");
+		String type = cs.nextLine();
+		System.out.println("Enter category of the product: ");
+		String category = cs.nextLine();
+		
+		Product new_product = new Product(name, price, cnt, type, category, seller);
+		products.add(new_product);
+		return;
+	}
 }
