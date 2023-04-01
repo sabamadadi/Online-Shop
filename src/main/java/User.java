@@ -10,8 +10,8 @@ public class User {
 	static String address;
 	static Cart cart;
 	static ArrayList<Order> history = new ArrayList<Order>();
-	static ArrayList<String> purchased = new ArrayList<String>();
-	static ArrayList<Integer> purchased_cnt = new ArrayList<Integer>();
+	static ArrayList<CartProduct> purchased = new ArrayList<CartProduct>();
+	static int fund_requested_amount;
 	
 	static float wallet;
 	
@@ -23,6 +23,7 @@ public class User {
 		address = input_address;
 		cart = new Cart(this);
 		shop = input_shop;
+		fund_requested_amount = 0;
 	}
 	
 	public void ViewProfile() {
@@ -38,7 +39,7 @@ public class User {
 		}
 		System.out.println("Purchased list: ");
 		for(int i = 0; i < purchased.size(); i++) {
-			System.out.println(purchased.get(i) + " " + purchased_cnt.get(i));
+			purchased.get(i).Show();
 		}
 	}
 	
@@ -82,6 +83,17 @@ public class User {
 	
 	public void RequestFund() {
 		shop.RequestFund(this);
+		return;
+	}
+	
+	public void AddPurchased(CartProduct cart_product) {
+		for(int i = 0; i < purchased.size(); i++) {
+			if(purchased.get(i).name.equals(cart_product.name)) {
+				purchased.get(i).cnt += cart_product.cnt;
+				return;
+			}
+		}
+		purchased.add(cart_product);
 		return;
 	}
 }

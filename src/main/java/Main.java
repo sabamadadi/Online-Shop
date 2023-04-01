@@ -8,8 +8,14 @@ public class Main {
 	static boolean isAdmin;
 	static Seller current_seller;
 	static boolean isSeller;
+	static getdistancematrixAPI gd;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args){
+		//gd = new getdistancematrixAPI();
+		//String source = "Tehran";
+	    //String destination = "Shiraz";
+	    //gd.getData(source, destination);
+	    
 		shop = new Shop("Digikala", "digikala.com", "61930000");
 		current_user = null;
 		isUser = false;
@@ -113,7 +119,7 @@ public class Main {
 					current_seller.shop.AddProduct(current_seller);
 				}
 				if(input == 4) {
-					//current_seller.shop.UpdateProduct();
+					current_seller.shop.UpdateProduct(current_seller);
 				}
 				if(input == 5) {
 					current_seller = null;

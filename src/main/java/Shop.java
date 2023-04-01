@@ -6,9 +6,8 @@ public class Shop {
 	static String webaddress;
 	static String phone;
 	static ArrayList<User> users = new ArrayList<User>();
-	static ArrayList<String> fund_users = new ArrayList<String>();
-	static ArrayList<String> unconfirmeds = new ArrayList<String>();
-	static ArrayList<Integer> fund_cnt = new ArrayList<Integer>();
+	static ArrayList<User> fund_users = new ArrayList<User>();
+	static ArrayList<Seller> unconfirmeds = new ArrayList<Seller>();
 	static ArrayList<Admin> admins = new ArrayList<Admin>();
 	static ArrayList<Seller> sellers = new ArrayList<Seller>();
 	static ArrayList<Product> products = new ArrayList<Product>();
@@ -24,6 +23,7 @@ public class Shop {
 		
 		Admin admin = new Admin("admin", authenticator.Hash("admin"), "admin@gmail.com", this);
 		admins.add(admin);
+		return;
 	}
 	
 	public User LoginUser() {
@@ -44,12 +44,12 @@ public class Shop {
 		return tmp;
 	}
 	
-	public Admin RegisterAdmin() {
+	public void RegisterAdmin() {
 		Admin tmp = authenticator.RegisterAdmin();
 		if(tmp != null) {
 			admins.add(tmp);
 		}
-		return tmp;
+		return;
 	}
 	
 	public Seller LoginSeller() {
@@ -65,9 +65,9 @@ public class Shop {
 		return tmp;
 	}
 	
-	private Product Find(String input_product) {
+	private Product findProduct(String input_product_name) {
 		for(int i = 0; i < products.size(); i++) {
-			if(products.get(i).name.equals(input_product)) {
+			if(products.get(i).name.equals(input_product_name)) {
 				return products.get(i);
 			}
 		}
@@ -77,18 +77,12 @@ public class Shop {
 	public void Purchase(Cart cart) {
 		Order order = new Order(cart.user);
 		for(int i = 0; i < cart.cart.size(); i++) {
-			Product current_product = Find(cart.cart.get(i));
-			int quantity = cart.cart_cnt.get(i);
+			Product current_product = findProduct(cart.cart.get(i).name);
+			int quantity = cart.cart.get(i).cnt;
 			
-			order.cart.add(current_product.name);
-			order.cart_cnt.add(quantity);
-			
-			cart.user.purchased.add(current_product.name);
-			cart.user.purchased_cnt.add(quantity);
-			
+			order.cart.add(cart.cart.get(i));
+			cart.user.AddPurchased(cart.cart.get(i));
 			cart.cart.remove(i);
-			cart.cart_cnt.remove(i);
-			
 			cart.user.wallet -= quantity * current_product.price;
 			current_product.seller.wallet += (0.9) * quantity * current_product.price;
 			wallet += (0.1) * quantity * current_product.price;
@@ -102,35 +96,30 @@ public class Shop {
 		Scanner cs = new Scanner(System.in);
 		System.out.println("Enter amount of your requested fund :");
 		int amount = Integer.parseInt(cs.nextLine());
-		
-		for(int i = 0; i < fund_users.size(); i++) {
-			if(fund_users.get(i).equals(current.username)) {
-				fund_cnt.set(i, fund_cnt.get(i) + amount);
-				return;
-			}
+	    
+		current.fund_requested_amount += amount;
+		if(current.fund_requested_amount == 0) {
+			fund_users.add(current);
 		}
-		
-		fund_users.add(current.username);
-		fund_cnt.add(amount);
 		return;
 	}
 	
-	public boolean Reserve(String name) {
-		Product current = Find(name);
-		if(current == null || current.cnt == 0) {
-			return false;
+	public void Reserve(CartProduct cart_product) {
+		Product current = findProduct(cart_product.name);
+		if(current.cnt == 0) {
+			return;
 		}
 		
 		current.cnt -= 1;
-		return true;
+		cart_product.cnt += 1;
+		return;
 	}
 	
-	public void Release(String name) {
-		Product current = Find(name);
-		if(current == null) {
-			return;
-		}
+	public void Release(CartProduct cart_product) {
+		Product current = findProduct(name);
+		
 		current.cnt += 1;
+		cart_product.cnt -= 1;
 		return;
 	}
 	
@@ -208,18 +197,13 @@ public class Shop {
 		int input = 1;
 		while(input != 0) {
 			for(int i = 0; i < fund_users.size(); i++) {
-				System.out.println((i + 1) + " Username: " + fund_users.get(i) + " Amount: " + fund_cnt.get(i));
+				System.out.println((i + 1) + " " + fund_users.get(i).username + " " + fund_users.get(i).fund_requested_amount);
 			}
 			input = Integer.parseInt(cs.nextLine());
-			if(input != 0 && input-1 < fund_users.size()) {
-				for(int i = 0; i < users.size(); i++) {
-					if(users.get(i).username.equals(fund_users.get(input - 1))) {
-						users.get(i).wallet += fund_cnt.get(input - 1);
-						fund_users.remove(input - 1);
-						fund_cnt.remove(input - 1);
-						break;
-					}
-				}
+			if(input != 0 && input <= fund_users.size()) {
+				fund_users.get(input - 1).wallet += fund_users.get(input - 1).fund_requested_amount;
+				fund_users.get(input - 1).fund_requested_amount = 0;
+				fund_users.remove(input - 1);
 			}
 		}
 		return;
@@ -232,17 +216,12 @@ public class Shop {
 		int input = 1;
 		while(input != 0) {
 			for(int i = 0; i < unconfirmeds.size(); i++) {
-				System.out.println((i + 1) + " Company name: " + unconfirmeds.get(i));
+				System.out.println((i + 1) + " Company name: " + unconfirmeds.get(i).company_name);
 			}
 			input = Integer.parseInt(cs.nextLine());
-			if(input != 0 && input-1 < unconfirmeds.size()) {
-				for(int i = 0; i < sellers.size(); i++) {
-					if(sellers.get(i).company_name.equals(unconfirmeds.get(input - 1))) {
-						sellers.get(i).registered = true;
-						unconfirmeds.remove(input - 1);
-						break;
-					}
-				}
+			if(input != 0 && input <= unconfirmeds.size()) {
+				unconfirmeds.get(input - 1).registered = true;
+				unconfirmeds.remove(input - 1);	
 			}
 		}
 		return;
@@ -263,6 +242,44 @@ public class Shop {
 		
 		Product new_product = new Product(name, price, cnt, type, category, seller);
 		products.add(new_product);
+		seller.available.add(name);
+		return;
+	}
+	
+	public void UpdateProduct(Seller seller) {
+		Scanner cs = new Scanner(System.in);
+		System.out.println("Which product do you want to update ?");
+		System.out.println("Enter index of selected product");
+		System.out.println("Enter 0 to exit");
+		int input = 1;
+		while(input > 0) {
+			for(int i = 0; i < seller.available.size(); i++) {
+				System.out.println((i + 1) + " " + seller.available.get(i));
+			}
+			input = Integer.parseInt(cs.nextLine());
+			if(input == 0 || input > seller.available.size()) {
+				continue;
+			}
+			Product current_product = findProduct(seller.available.get(input - 1));
+			current_product.Update();
+		}
 		return;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

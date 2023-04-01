@@ -1,18 +1,16 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
-public class Product {
-	static String name;
+public class Product extends CartProduct{
 	static int price;
-	static int cnt;
 	static ArrayList<String> comments = new ArrayList<String>();
 	static String type;
 	static String category;
 	static Seller seller;
 	
 	public Product(String input_name, int input_price, int input_cnt, String input_type, String input_category, Seller input_seller) {
-		name = input_name;
+		super(input_name, input_cnt);
 		price = input_price;
-		cnt = input_cnt;
 		type = input_type;
 		category = input_category;
 		seller = input_seller;
@@ -29,6 +27,19 @@ public class Product {
 		for(int i = 0; i < comments.size(); i++) {
 			System.out.println(comments.get(i));
 		}
+		return;
+	}
+	
+	public void Update() {
+		Scanner cs = new Scanner(System.in);
+		System.out.println("Enter new price:");
+		price = Integer.parseInt(cs.nextLine());
+		System.out.println("Enter new stock:");
+		cnt = Integer.parseInt(cs.nextLine());
+		System.out.println("Enter new type:");
+		type = cs.nextLine();
+		System.out.println("Enter new Category:");
+		category = cs.nextLine();
 		return;
 	}
 }

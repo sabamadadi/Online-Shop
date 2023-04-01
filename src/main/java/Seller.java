@@ -5,7 +5,7 @@ public class Seller {
 	static Shop shop;
 	static String company_name;
 	static int password;
-	static ArrayList<Product> available = new ArrayList<Product>();
+	static ArrayList<String> available = new ArrayList<String>();
 	static float wallet;
 	static boolean registered;
 	
