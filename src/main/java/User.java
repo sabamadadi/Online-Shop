@@ -12,9 +12,9 @@ public class User {
 	static ArrayList<Order> history = new ArrayList<Order>();
 	static ArrayList<CartProduct> purchased = new ArrayList<CartProduct>();
 	static int fund_requested_amount;
-	
+
 	static float wallet;
-	
+
 	public User(String input_username, int input_password, String input_email, String input_phone, String input_address, Shop input_shop) {
 		username = input_username;
 		password = input_password;
@@ -24,8 +24,9 @@ public class User {
 		cart = new Cart(this);
 		shop = input_shop;
 		fund_requested_amount = 0;
+		wallet = 0;
 	}
-	
+
 	public void ViewProfile() {
 		System.out.println("Username: " + username);
 		System.out.println("Email: " + email);
@@ -42,50 +43,45 @@ public class User {
 			purchased.get(i).Show();
 		}
 	}
-	
+
 	public void EditProfile() {
 		Scanner cs = new Scanner(System.in);
-		
+
 		System.out.println("Enter new password:");
 		String new_password = cs.nextLine();
 		int hash_password = Shop.authenticator.Hash(new_password);
 		password = hash_password;
-		
+
 		System.out.println("Enter new email address");
 		email = cs.nextLine();
 		System.out.println("Enter new phone number");
 		phone = cs.nextLine();
 		System.out.println("Enter new address");
 		address = cs.nextLine();
-		
+
 		return;
 	}
-	
+
 	public void EditCart() {
 		cart.Edit();
 		return;
 	}
-	
+
 	public void Purchase() {
-		if(cart.amount < wallet) {
-			System.out.println("Not enough money !");
-			return;
-		}
-		
-		shop.Purchase(cart);
+		shop.Purchase(this);
 		return;
 	}
-	
+
 	public void Search() {
 		shop.Search(cart);
 		return;
 	}
-	
+
 	public void RequestFund() {
 		shop.RequestFund(this);
 		return;
 	}
-	
+
 	public void AddPurchased(CartProduct cart_product) {
 		for(int i = 0; i < purchased.size(); i++) {
 			if(purchased.get(i).name.equals(cart_product.name)) {

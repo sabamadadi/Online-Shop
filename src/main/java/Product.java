@@ -7,7 +7,7 @@ public class Product extends CartProduct{
 	static String type;
 	static String category;
 	static Seller seller;
-	
+
 	public Product(String input_name, int input_price, int input_cnt, String input_type, String input_category, Seller input_seller) {
 		super(input_name, input_cnt);
 		price = input_price;
@@ -16,7 +16,7 @@ public class Product extends CartProduct{
 		seller = input_seller;
 		return;
 	}
-	
+
 	public void Show() {
 		System.out.println("Name: " + name);
 		System.out.println("Price: " + price);
@@ -29,7 +29,7 @@ public class Product extends CartProduct{
 		}
 		return;
 	}
-	
+
 	public void Update() {
 		Scanner cs = new Scanner(System.in);
 		System.out.println("Enter new price:");

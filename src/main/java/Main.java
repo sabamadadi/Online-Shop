@@ -8,14 +8,9 @@ public class Main {
 	static boolean isAdmin;
 	static Seller current_seller;
 	static boolean isSeller;
-	static getdistancematrixAPI gd;
-	
+	//static getdistancematrixAPI gd;
+
 	public static void main(String[] args){
-		//gd = new getdistancematrixAPI();
-		//String source = "Tehran";
-	    //String destination = "Shiraz";
-	    //gd.getData(source, destination);
-	    
 		shop = new Shop("Digikala", "digikala.com", "61930000");
 		current_user = null;
 		isUser = false;
@@ -23,13 +18,13 @@ public class Main {
 		isAdmin = false;
 		current_seller = null;
 		isSeller = false;
-		
+
 		boolean running = true;
 		while(running) {
 			running = runMenu();
 		}
 	}
-	
+
 	public static boolean runMenu() {
 		Scanner cs = new Scanner(System.in);
 		if(isUser) {
@@ -40,7 +35,7 @@ public class Main {
 			System.out.println("5. Search Product");
 			System.out.println("6. Request for fund");
 			System.out.println("7. Logout");
-			
+
 			int input = Integer.parseInt(cs.nextLine());
 			if(input == 1) {
 				current_user.ViewProfile();
@@ -68,24 +63,36 @@ public class Main {
 		else if(isAdmin) {
 			System.out.println("1. Confirm a seller");
 			System.out.println("2. Confirm a fund request");
-			System.out.println("3. Register admin");
-			System.out.println("4. Update User");
-			System.out.println("5. Logout");
-			
+			System.out.println("3. Confirm an order");
+			System.out.println("4. Register Admin");
+			System.out.println("5. Edit Profile");
+			System.out.println("6. Shop Review");
+			System.out.println("7. User Review");
+			System.out.println("8. Logout");
+
 			int input = Integer.parseInt(cs.nextLine());
 			if(input == 1) {
-				current_admin.shop.ConfirmSeller();
+				current_admin.ConfirmSeller();
 			}
 			if(input == 2) {
-				current_admin.shop.ConfirmFund();
+				current_admin.ConfirmFund();
 			}
 			if(input == 3) {
-				current_admin.shop.RegisterAdmin();
+				current_admin.ConfirmOrder();
 			}
 			if(input == 4) {
-				current_admin.EditProfile();
+				current_admin.shop.RegisterAdmin();
 			}
 			if(input == 5) {
+				current_admin.EditProfile();
+			}
+			if(input == 6) {
+				current_admin.ShopReview();
+			}
+			if(input == 7) {
+				current_admin.UserReview();
+			}
+			if(input == 8) {
 				current_admin = null;
 				isAdmin = false;
 			}
@@ -94,7 +101,7 @@ public class Main {
 			if(current_seller.registered == false) {
 				System.out.println("Your account is not registered yet !");
 				System.out.println("To logout please enter 0");
-				
+
 				int input = Integer.parseInt(cs.nextLine());
 				if(input == 0) {
 					current_seller = null;
@@ -107,7 +114,7 @@ public class Main {
 				System.out.println("3. Add Product");
 				System.out.println("4. Update Product");
 				System.out.println("5. Logout");
-				
+
 				int input = Integer.parseInt(cs.nextLine());
 				if(input == 1) {
 					current_seller.ViewProfile();
@@ -126,7 +133,7 @@ public class Main {
 					isSeller = false;
 				}
 			}
-			
+
 		}
 		else {
 			System.out.println("1. Login user");
@@ -135,7 +142,7 @@ public class Main {
 			System.out.println("4. Register user");
 			System.out.println("5. Register seller");
 			System.out.println("6. Exit");
-			
+
 			int input = Integer.parseInt(cs.nextLine());
 			if(input == 1) {
 				current_user = shop.LoginUser();

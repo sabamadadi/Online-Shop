@@ -8,7 +8,7 @@ public class Order {
 		user = input_user;
 		return;
 	}
-	
+
 	public void Show() {
 		for(int i = 0; i < cart.size(); i++) {
 			cart.get(i).Show();

@@ -5,14 +5,14 @@ public class Admin {
 	static String username;
 	static int password;
 	static String email;
-	
+
 	public Admin(String input_username, int input_password, String input_email, Shop input_shop) {
 		username = input_username;
 		password = input_password;
 		email = input_email;
 		shop = input_shop;
 	}
-	
+
 	public void EditProfile() {
 		Scanner cs = new Scanner(System.in);
 		System.out.println("Enter new password:");
@@ -22,5 +22,24 @@ public class Admin {
 		System.out.println("Enter new email address:");
 		email = cs.nextLine();
 		return;
+	}
+
+	public void ShopReview() {
+		shop.Show();
+	}
+
+	public void ConfirmFund() {
+		shop.ConfirmFund();
+		return;
+	}
+	public void ConfirmSeller() {
+		shop.ConfirmSeller();
+		return;
+	}
+	public void ConfirmOrder() {
+		shop.ConfirmOrder();
+	}
+	public void UserReview() {
+		shop.UserReview();
 	}
 }
