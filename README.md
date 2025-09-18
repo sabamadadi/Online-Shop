@@ -10,7 +10,6 @@
 A **command-line-based online shop simulator** inspired by **Digikala & Amazon**.  
 Implemented in **Java**, showcasing **OOP principles**: inheritance, polymorphism, abstraction, and encapsulation.
 
----
 
 ## 📝 Features
 
@@ -34,7 +33,6 @@ Implemented in **Java**, showcasing **OOP principles**: inheritance, polymorphis
 - Shop earns **10% commission** per product  
 - Orders: date, total price, buyer & seller info  
 
----
 
 ## ✨ Bonus Features
 - Persistent data storage (files/DB)  
@@ -43,18 +41,17 @@ Implemented in **Java**, showcasing **OOP principles**: inheritance, polymorphis
 - Multiple sellers per product  
 - Shipping fees, notifications, subscription & refund system  
 
----
+
 
 ## 🛠 Tools & Libraries
 - **Java**, **UUID**, **Maven/Gradle**  
 - Optional: **JavaFX**, **PostgreSQL**  
 
----
+
 
 ## ⚡ Setup & Run
 ```bash
-git clone https://github.com/<your-username>/digikala-simulator.git
-cd digikala-simulator
+git clone https://github.com/sabamadadi/Online-Shop.git
+cd Online-Shop
 mvn clean install   # or gradle build
-java -jar target/digikala-simulator.jar
-
+java -jar target/Online-Shop.jar
